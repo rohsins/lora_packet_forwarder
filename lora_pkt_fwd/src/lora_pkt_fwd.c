@@ -1733,10 +1733,10 @@ void thread_up(void) {
 		++buff_index;
 		buff_up[buff_index] = 0; /* add string terminator, for safety */
 
-		MSG("\n\n##Radio Parameters## \nTimestamp: %s \nmodulation: %s \nbandwidth: %s \nspreadingfactor: %s \nrssi: %f \nsnr: %f \nfreq: %u \ncoderate: %s", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
+		MSG("\n##Radio Parameters## \nTimestamp: %s \nmodulation: %s \nbandwidth: %s \nspreadingfactor: %s \nrssi: %f \nsnr: %f \nfreq: %u \ncoderate: %s \n", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
 
 		f = fopen("parameterlog.txt","a");
-		fprintf(f,"\n\n##Radio Parameters## \nTimestamp: %s \nmodulation: %s \nbandwidth: %s \nspreadingfactor: %s \nrssi: %f \nsnr: %f \nfreq: %u \ncoderate: %s", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
+		fprintf(f,"\n##Radio Parameters## \nTimestamp: %s \nmodulation: %s \nbandwidth: %s \nspreadingfactor: %s \nrssi: %f \nsnr: %f \nfreq: %u \ncoderate: %s", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
 		fclose(f);
 
 		//MSG("\n\n test: %s \n\n", logme->modulation);
