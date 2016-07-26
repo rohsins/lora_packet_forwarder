@@ -107,6 +107,8 @@ Maintainer: Sylvain Miermont
 /* -------------------------------------------------------------------------- */
 /* --- PRIVATE VARIABLES (GLOBAL) ------------------------------------------- */
 
+static uint8_t logParam[TX_BUFF_SIZE];
+
 /* signal handling variables */
 volatile bool exit_sig = false; /* 1 -> application terminates cleanly (shut down hardware, close open files, etc) */
 volatile bool quit_sig = false; /* 1 -> application terminates without shutting down the hardware */
@@ -232,6 +234,9 @@ static uint8_t crc8_ccit(const uint8_t * data, unsigned size);
 
 static double difftimespec(struct timespec end, struct timespec beginning);
 
+
+static char stat_timestamp[24];
+
 /* threads */
 void thread_up(void);
 void thread_down(void);
@@ -239,6 +244,18 @@ void thread_gps(void);
 void thread_valid(void);
 void thread_jit(void);
 void thread_timersync(void);
+
+/*structure */
+struct LogParam {
+	char modulation[8];
+	char bandwidth[8];
+	char datarate[8];
+	char spreadingfactor[8];
+	float rssi;
+	float snr;
+	uint32_t freq;
+	char coderate[8];
+} LogParam;
 
 /* -------------------------------------------------------------------------- */
 /* --- PRIVATE FUNCTIONS DEFINITION ----------------------------------------- */
@@ -901,7 +918,7 @@ int main(void)
 	
 	/* statistics variable */
 	time_t t;
-	char stat_timestamp[24];
+	//char stat_timestamp[24];
 	float rx_ok_ratio;
 	float rx_bad_ratio;
 	float rx_nocrc_ratio;
@@ -1200,6 +1217,7 @@ int main(void)
         printf("# RF packets forwarded: %u (%u bytes)\n", cp_up_pkt_fwd, cp_up_payload_byte);
         printf("# PUSH_DATA datagrams sent: %u (%u bytes)\n", cp_up_dgram_sent, cp_up_network_byte);
         printf("# PUSH_DATA acknowledged: %.2f%%\n", 100.0 * up_ack_ratio);
+	
         printf("### [DOWNSTREAM] ###\n");
         printf("# PULL_DATA sent: %u (%.2f%% acknowledged)\n", cp_dw_pull_sent, 100.0 * dw_ack_ratio);
         printf("# PULL_RESP(onse) datagrams received: %u (%u bytes)\n", cp_dw_dgram_rcv, cp_dw_network_byte);
@@ -1280,9 +1298,14 @@ void thread_up(void) {
 	int i, j; /* loop variables */
 	unsigned pkt_in_dgram; /* nb on Lora packet in the current datagram */
 
+	FILE *f;
+
 	/* allocate memory for packet fetching and processing */
 	struct lgw_pkt_rx_s rxpkt[NB_PKT_MAX]; /* array containing inbound packets + metadata */
 	struct lgw_pkt_rx_s *p; /* pointer on a RX packet */
+	struct LogParam radioparam;
+	struct LogParam *logme;
+	logme = &radioparam;
 	int nb_pkt;
 
 	/* local copy of GPS time reference */
@@ -1326,7 +1349,7 @@ void thread_up(void) {
 
 		/* fetch packets */
 		pthread_mutex_lock(&mx_concent);
-		nb_pkt = lgw_receive(NB_PKT_MAX, rxpkt);
+			nb_pkt = lgw_receive(NB_PKT_MAX, rxpkt);
 		pthread_mutex_unlock(&mx_concent);
 		if (nb_pkt == LGW_HAL_ERROR) {
 			MSG("ERROR: [up] failed packet fetch, exiting\n");
@@ -1474,56 +1497,96 @@ void thread_up(void) {
 			/* Packet modulation, 13-14 useful chars */
 			if (p->modulation == MOD_LORA) {
 				memcpy((void *)(buff_up + buff_index), (void *)",\"modu\":\"LORA\"", 14);
+				memcpy((void *)(logParam + buff_index), (void *)",\"modu\":\"LORA\"", 14);
 				buff_index += 14;
+				memset(logme->modulation, 0, 8);
+				strcpy(logme->modulation, "LORA");
+				//logme->modulation = {'L','O','R','A'};
 				
 				/* Lora datarate & bandwidth, 16-19 useful chars */
 				switch (p->datarate) {
 					case DR_LORA_SF7:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"datr\":\"SF7", 12);
+						memcpy((void *)(logParam + buff_index), (void *)",\"datr\":\"SF7", 12);
 						buff_index += 12;
+						//logme->spreadingfactor = 7;
+			 			memset(logme->spreadingfactor, 0, 8);
+						strcpy(logme->spreadingfactor, "SF7");
 						break;
 					case DR_LORA_SF8:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"datr\":\"SF8", 12);
-						buff_index += 12;
+						memcpy((void *)(logParam + buff_index), (void *)",\"datr\":\"SF8", 12);
+			 			memset(logme->spreadingfactor, 0, 8);
+						strcpy(logme->spreadingfactor, "SF8");
+						//logme->spreadingfactor = 8;
 						break;
 					case DR_LORA_SF9:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"datr\":\"SF9", 12);
+						memcpy((void *)(logParam + buff_index), (void *)",\"datr\":\"SF9", 12);
 						buff_index += 12;
+						//logme->spreadingfactor = 9;
+			 			memset(logme->spreadingfactor, 0, 8);
+						strcpy(logme->spreadingfactor, "SF9");
 						break;
 					case DR_LORA_SF10:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"datr\":\"SF10", 13);
+						memcpy((void *)(logParam + buff_index), (void *)",\"datr\":\"SF10", 13);
 						buff_index += 13;
+						//logme->spreadingfactor = 10;
+			 			memset(logme->spreadingfactor, 0, 8);
+						strcpy(logme->spreadingfactor, "SF10");
 						break;
 					case DR_LORA_SF11:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"datr\":\"SF11", 13);
+						memcpy((void *)(logParam + buff_index), (void *)",\"datr\":\"SF11", 13);
 						buff_index += 13;
+						//logme->spreadingfactor = 11;
+			 			memset(logme->spreadingfactor, 0, 8);
+						strcpy(logme->spreadingfactor, "SF11");
 						break;
 					case DR_LORA_SF12:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"datr\":\"SF12", 13);
+						memcpy((void *)(logParam + buff_index), (void *)",\"datr\":\"SF12", 13);
 						buff_index += 13;
+						//logme->spreadingfactor = 12;
+			 			memset(logme->spreadingfactor, 0, 8);
+						strcpy(logme->spreadingfactor, "SF12");
 						break;
 					default:
 						MSG("ERROR: [up] lora packet with unknown datarate\n");
 						memcpy((void *)(buff_up + buff_index), (void *)",\"datr\":\"SF?", 12);
 						buff_index += 12;
+			 			memset(logme->spreadingfactor, 0, 8);
+						strcpy(logme->spreadingfactor, "SF?");
 						exit(EXIT_FAILURE);
 				}
 				switch (p->bandwidth) {
 					case BW_125KHZ:
 						memcpy((void *)(buff_up + buff_index), (void *)"BW125\"", 6);
+						memcpy((void *)(logParam + buff_index), (void *)"BW125\"", 6);
 						buff_index += 6;
+			 			memset(logme->bandwidth, 0, 8);
+						strcpy(logme->bandwidth, "BW125");
 						break;
 					case BW_250KHZ:
 						memcpy((void *)(buff_up + buff_index), (void *)"BW250\"", 6);
+						memcpy((void *)(logParam + buff_index), (void *)"BW250\"", 6);
 						buff_index += 6;
+			 			memset(logme->bandwidth, 0, 8);
+						strcpy(logme->bandwidth, "BW250");
 						break;
 					case BW_500KHZ:
 						memcpy((void *)(buff_up + buff_index), (void *)"BW500\"", 6);
+						memcpy((void *)(logParam + buff_index), (void *)"BW500\"", 6);
 						buff_index += 6;
+			 			memset(logme->bandwidth, 0, 8);
+						strcpy(logme->bandwidth, "BW500");
 						break;
 					default:
 						MSG("ERROR: [up] lora packet with unknown bandwidth\n");
 						memcpy((void *)(buff_up + buff_index), (void *)"BW?\"", 4);
+			 			memset(logme->bandwidth, 0, 8);
+						strcpy(logme->bandwidth, "BW?");
 						buff_index += 4;
 						exit(EXIT_FAILURE);
 				}
@@ -1532,27 +1595,43 @@ void thread_up(void) {
 				switch (p->coderate) {
 					case CR_LORA_4_5:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"codr\":\"4/5\"", 13);
+						memcpy((void *)(logParam + buff_index), (void *)",\"codr\":\"4/5\"", 13);
 						buff_index += 13;
+						memset(logme->coderate, 0, 8);
+						strcpy(logme->coderate, "4/5");
 						break;
 					case CR_LORA_4_6:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"codr\":\"4/6\"", 13);
+						memcpy((void *)(logParam + buff_index), (void *)",\"codr\":\"4/6\"", 13);
+						memset(logme->coderate, 0, 8);
+						strcpy(logme->coderate, "4/6");
 						buff_index += 13;
 						break;
 					case CR_LORA_4_7:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"codr\":\"4/7\"", 13);
+						memcpy((void *)(logParam + buff_index), (void *)",\"codr\":\"4/7\"", 13);
+						memset(logme->coderate, 0, 8);
+						strcpy(logme->coderate, "4/7");
 						buff_index += 13;
 						break;
 					case CR_LORA_4_8:
 						memcpy((void *)(buff_up + buff_index), (void *)",\"codr\":\"4/8\"", 13);
+						memcpy((void *)(logParam + buff_index), (void *)",\"codr\":\"4/8\"", 13);
+						memset(logme->coderate, 0, 8);
+						strcpy(logme->coderate, "4/8");
 						buff_index += 13;
 						break;
 					case 0: /* treat the CR0 case (mostly false sync) */
 						memcpy((void *)(buff_up + buff_index), (void *)",\"codr\":\"OFF\"", 13);
+						memset(logme->coderate, 0, 8);
+						strcpy(logme->coderate, "OFF");
 						buff_index += 13;
 						break;
 					default:
 						MSG("ERROR: [up] lora packet with unknown coderate\n");
 						memcpy((void *)(buff_up + buff_index), (void *)",\"codr\":\"?\"", 11);
+						memset(logme->coderate, 0, 8);
+						strcpy(logme->coderate, "?");
 						buff_index += 11;
 						exit(EXIT_FAILURE);
 				}
@@ -1567,6 +1646,9 @@ void thread_up(void) {
 				}
 			} else if (p->modulation == MOD_FSK) {
 				memcpy((void *)(buff_up + buff_index), (void *)",\"modu\":\"FSK\"", 13);
+				memcpy((void *)(logParam + buff_index), (void *)",\"modu\":\"FSK\"", 13);
+				memset(logme->modulation, 0, 8);
+				strcpy(logme->modulation, "FSK");
 				buff_index += 13;
 				
 				/* FSK datarate, 11-14 useful chars */
@@ -1578,6 +1660,8 @@ void thread_up(void) {
 					exit(EXIT_FAILURE);
 				}
 			} else {
+				memset(logme->modulation, 0, 8);
+				strcpy(logme->modulation, "?");
 				MSG("ERROR: [up] received packet with unknown modulation\n");
 				exit(EXIT_FAILURE);
 			}
@@ -1649,10 +1733,16 @@ void thread_up(void) {
 		++buff_index;
 		buff_up[buff_index] = 0; /* add string terminator, for safety */
 
-		// printf("\nJSON up: %s\n", (char *)(buff_up + 12)); /* DEBUG: display JSON payload */
+		MSG("\n\n##Radio Parameters## \nTimestamp: %s \nmodulation: %s \nbandwidth: %s \nspreadingfactor: %s \nrssi: %f \nsnr: %f \nfreq: %u \ncoderate: %s", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
 
+		f = fopen("parameterlog.txt","a");
+		fprintf(f,"\n\n##Radio Parameters## \nTimestamp: %s \nmodulation: %s \nbandwidth: %s \nspreadingfactor: %s \nrssi: %f \nsnr: %f \nfreq: %u \ncoderate: %s", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
+		fclose(f);
+
+		//MSG("\n\n test: %s \n\n", logme->modulation);
 		/* send datagram to server */
 		send(sock_up, (void *)buff_up, buff_index, 0);
+
 		clock_gettime(CLOCK_MONOTONIC, &send_time);
 		pthread_mutex_lock(&mx_meas_up);
 		meas_up_dgram_sent += 1;
