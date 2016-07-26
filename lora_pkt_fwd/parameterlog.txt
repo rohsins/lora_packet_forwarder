@@ -695,3 +695,133 @@ rssi: -34.000000
 snr: 8.500000 
 freq: 868300000 
 coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 06:59:46 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -34.000000 
+snr: 8.500000 
+freq: 868300000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 06:59:46 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -35.000000 
+snr: 8.000000 
+freq: 868100000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:00:16 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -35.000000 
+snr: 8.000000 
+freq: 868100000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:00:46 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -35.000000 
+snr: 8.000000 
+freq: 868100000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:00:46 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -35.000000 
+snr: 8.250000 
+freq: 868500000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:01:16 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -35.000000 
+snr: 8.250000 
+freq: 868500000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:01:46 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -35.000000 
+snr: 8.250000 
+freq: 868500000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:01:46 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -34.000000 
+snr: 10.250000 
+freq: 868300000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:02:16 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -34.000000 
+snr: 10.250000 
+freq: 868300000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:02:46 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -34.000000 
+snr: 10.250000 
+freq: 868300000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:02:46 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -36.000000 
+snr: 9.500000 
+freq: 868100000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:03:16 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -36.000000 
+snr: 9.500000 
+freq: 868100000 
+coderate: 4/5
+
+##Radio Parameters## 
+Timestamp: 2016-07-26 07:03:46 GMT 
+modulation: LORA 
+bandwidth: BW125 
+spreadingfactor: SF7 
+rssi: -36.000000 
+snr: 9.500000 
+freq: 868100000 
+coderate: 4/5

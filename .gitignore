@@ -1,3 +1,4 @@
 *.o
 *.swp
 *.bak
+lora_pkt_fwd/parameterlog.txt
