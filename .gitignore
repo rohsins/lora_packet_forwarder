@@ -2,3 +2,4 @@
 *.swp
 *.bak
 lora_pkt_fwd/parameterlog.txt
+lora_pkt_fwd/parameterlog.csv

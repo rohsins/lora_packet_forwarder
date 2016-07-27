@@ -1299,6 +1299,7 @@ void thread_up(void) {
 	unsigned pkt_in_dgram; /* nb on Lora packet in the current datagram */
 
 	FILE *f;
+	FILE *fc;
 
 	/* allocate memory for packet fetching and processing */
 	struct lgw_pkt_rx_s rxpkt[NB_PKT_MAX]; /* array containing inbound packets + metadata */
@@ -1736,8 +1737,11 @@ void thread_up(void) {
 		MSG("\n##Radio Parameters## \nTimestamp: %s \nmodulation: %s \nbandwidth: %s \nspreadingfactor: %s \nrssi: %f \nsnr: %f \nfreq: %u \ncoderate: %s \n", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
 
 		f = fopen("parameterlog.txt","a");
-		fprintf(f,"\n##Radio Parameters## \nTimestamp: %s \nmodulation: %s \nbandwidth: %s \nspreadingfactor: %s \nrssi: %f \nsnr: %f \nfreq: %u \ncoderate: %s", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
+		fprintf(f,"\n##Radio Parameters## \nTimestamp: %s \nmodulation: %s \nbandwidth: %s \nspreadingfactor: %s \nrssi: %f \nsnr: %f \nfreq: %u \ncoderate: %s \n", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
 		fclose(f);
+		fc = fopen("parameterlog1.csv","a");
+		fprintf(fc,"%s,%s,%s,%s,%f,%f,%u,%s\n", stat_timestamp, logme->modulation, logme->bandwidth, logme->spreadingfactor, p->rssi, p->snr, p->freq_hz, logme->coderate);	
+		fclose(fc);
 
 		//MSG("\n\n test: %s \n\n", logme->modulation);
 		/* send datagram to server */
